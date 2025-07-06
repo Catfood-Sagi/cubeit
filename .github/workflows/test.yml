@@ -1,0 +1,33 @@
+# yml files work like dict with key:value and sub-key: sub-value
+
+name: Tests
+
+on: 
+    - push
+
+jobs: 
+    test: 
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v3
+
+            - name: Set up Python
+              uses: actions/setup-python@v4
+              with:
+                python-version: '3.11'
+
+            - name: Install dependencies
+              run: | # | allow for multii-line commands
+                python -m pip install --upgrade pip
+                pip install -r requirements.txt
+
+            - name: Ensure Browsers are installed
+              run: python -m playwright install chromium --with-deps
+            
+            - name: Run tests
+              run: |
+                cd cubeit
+                python -m http.server 8000 &
+                cd ..
+                pytest -v
